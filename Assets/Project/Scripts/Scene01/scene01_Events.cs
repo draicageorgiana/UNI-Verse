@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Scene01_Event : MonoBehaviour
 {
@@ -23,6 +24,14 @@ public class Scene01_Event : MonoBehaviour
     [SerializeField] int eventPos = 0;
     [SerializeField] GameObject charName;
     [SerializeField] GameObject fadeOut;
+    
+    // Name input UI
+    [SerializeField] GameObject nameInputPanel;
+    [SerializeField] TMP_InputField nameInputField;
+    [SerializeField] GameObject nameInputButton;
+    
+    private string playerCharacterName = "";
+    
     void Update()
     {
         textLenght = TextCreator.charCount;
@@ -183,7 +192,7 @@ public class Scene01_Event : MonoBehaviour
         nextButton.SetActive(true);
         yield return new WaitForSeconds(2);
         eventPos++;
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(3);
         
     }
 
