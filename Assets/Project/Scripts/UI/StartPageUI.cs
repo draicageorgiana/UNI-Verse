@@ -7,7 +7,8 @@ public class StartPageUI : MonoBehaviour
 {
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button continueButton;
-    [SerializeField] private Image gameLogoImage;
+    [SerializeField] private Button quitButton;
+    [SerializeField] private GameObject gameLogoImage;
     [SerializeField] private Text gameNameText;
     [SerializeField] private string loadingScreenSceneName = "LoadingScreen";
     [SerializeField] private string scene01Name = "Scene01";
@@ -41,14 +42,23 @@ public class StartPageUI : MonoBehaviour
         {
             continueButton.onClick.AddListener(OnContinueClicked);
         }
+
+        if (quitButton != null)
+        {
+            quitButton.onClick.AddListener(QuitGame);
+        }
     }
     
     private void DisplayRandomLogo()
     {
         if (gameLogoImage != null && logoSprites != null && logoSprites.Length > 0)
         {
-            int randomIndex = Random.Range(0, logoSprites.Length);
-            gameLogoImage.sprite = logoSprites[randomIndex];
+            // Use the first sprite in the array (or assign only one in Inspector)
+            var image = gameLogoImage.GetComponentInChildren<Image>();
+            if (image != null)
+            {
+                image.sprite = logoSprites[0];
+            }
         }
     }
     
@@ -110,6 +120,14 @@ public class StartPageUI : MonoBehaviour
         }
     }
     
+    private void QuitGame()
+    {
+        Application.Quit();
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
+
     private IEnumerator LoadSceneWithLoading(string sceneName)
     {
         // Load loading screen first
