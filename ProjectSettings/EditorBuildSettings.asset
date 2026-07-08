@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Scene02.unity
     guid: 4be7f35aab602410887320a028071c84
   - enabled: 1
+    path: Assets/Scenes/Scene03.unity
+    guid: 1a23ccc9678454d659ae9f51d373a197
+  - enabled: 1
     path: Assets/Scenes/EndCredits.unity
     guid: 485cb8ef9428f4b54a716af48f698fab
   m_configObjects:
