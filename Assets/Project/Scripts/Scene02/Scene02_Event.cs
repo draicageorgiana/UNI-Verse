@@ -17,6 +17,7 @@ public class Scene02_Event : MonoBehaviour
     [SerializeField] string textToSpeak;
     [SerializeField] int currentTextLenght;
     [SerializeField] int textLenght;
+    [SerializeField] int eventPos = 0;
     [SerializeField] GameObject charName;
     [SerializeField] GameObject treeInteract;
     [SerializeField] GameObject houseInteract; 
