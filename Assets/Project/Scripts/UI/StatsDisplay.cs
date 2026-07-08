@@ -16,29 +16,34 @@ public class StatsDisplay : MonoBehaviour
     
     private Coroutine fadeOutCoroutine;
     
+    void OnEnable()
+    {
+        // §3.6: subscribe to the decoupled static channel during the
+        // initialization phase (OnEnable)...
+        GameEvents.OnStatChanged += OnStatChanged;
+    }
+
+    void OnDisable()
+    {
+        // ...and unsubscribe during destruction (OnDisable).
+        GameEvents.OnStatChanged -= OnStatChanged;
+    }
+
     void Start()
     {
         if (canvasGroup == null)
         {
             canvasGroup = GetComponent<CanvasGroup>();
         }
-        
-        // Subscribe to stat changes
-        StatSystem.OnStatChanged += OnStatChanged;
-        
+
         // Initial display
         UpdateStatDisplay();
-        
+
         // Hide initially if we want fade-in on stat change
         if (canvasGroup != null)
         {
             canvasGroup.alpha = 0f;
         }
-    }
-    
-    void OnDestroy()
-    {
-        StatSystem.OnStatChanged -= OnStatChanged;
     }
     
     private void OnStatChanged(string statName, int newValue)

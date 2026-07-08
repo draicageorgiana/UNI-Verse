@@ -1,10 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
-using System;
-using UnityEditorInternal;
 
 public class Scene02_Event : MonoBehaviour
 {

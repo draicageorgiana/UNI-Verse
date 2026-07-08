@@ -35,7 +35,7 @@ public class PauseMenuUI : MonoBehaviour
     
     void Update()
     {
-        if (Input.GetKeyDown(pauseKey))
+        if (PausePressedThisFrame())
         {
             if (isPaused)
             {
@@ -46,6 +46,21 @@ public class PauseMenuUI : MonoBehaviour
                 Pause();
             }
         }
+    }
+
+    /// <summary>
+    /// This project runs with the Input System package as the active handler
+    /// (Project Settings → Player → Active Input Handling), where the legacy
+    /// UnityEngine.Input API throws at runtime. Read the matching backend.
+    /// </summary>
+    private bool PausePressedThisFrame()
+    {
+#if ENABLE_INPUT_SYSTEM
+        UnityEngine.InputSystem.Keyboard keyboard = UnityEngine.InputSystem.Keyboard.current;
+        return keyboard != null && keyboard.escapeKey.wasPressedThisFrame;
+#else
+        return Input.GetKeyDown(pauseKey);
+#endif
     }
     
     private void SetupButtonListeners()

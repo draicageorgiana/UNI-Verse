@@ -31,7 +31,8 @@ public class Scene01_Event : MonoBehaviour
     [SerializeField] GameObject nameInputButton;
     
     private string playerCharacterName = "";
-    
+    private bool nameConfirmed = false;
+
     void Update()
     {
         textLenght = TextCreator.charCount;
@@ -40,7 +41,31 @@ public class Scene01_Event : MonoBehaviour
     // Start method is called before the first frame update
     void Start()
     {
+        // §3.5 Character Customization: keep the input panel hidden until the
+        // story asks for a name, and wire the confirm button in code so no
+        // extra Inspector hookup is required.
+        if (nameInputPanel != null)
+        {
+            nameInputPanel.SetActive(false);
+        }
+        if (nameInputButton != null)
+        {
+            UnityEngine.UI.Button confirmButton = nameInputButton.GetComponent<UnityEngine.UI.Button>();
+            if (confirmButton != null)
+            {
+                confirmButton.onClick.AddListener(ConfirmNameInput);
+            }
+        }
+
         StartCoroutine(EventStarter());
+    }
+
+    /// <summary>Confirm handler for the character customization panel (§3.5).</summary>
+    public void ConfirmNameInput()
+    {
+        string typedName = nameInputField != null ? nameInputField.text : "";
+        playerCharacterName = string.IsNullOrWhiteSpace(typedName) ? "Player" : typedName.Trim();
+        nameConfirmed = true;
     }
 
     IEnumerator EventStarter()
@@ -118,7 +143,7 @@ public class Scene01_Event : MonoBehaviour
 
         // Conversation text
         charName.GetComponent<TMPro.TMP_Text>().text = "Character One (Amaara)";
-        textToSpeak = "Precisely! I am <Insert Name>, by the way. It's nice to meet you.";
+        textToSpeak = "Precisely! I am Amaara, by the way. It's nice to meet you.";
         textBox.GetComponent<TMPro.TMP_Text>().text = textToSpeak;  
         currentTextLenght = textToSpeak.Length;
         TextCreator.runTextPrint = true;  
@@ -139,8 +164,25 @@ public class Scene01_Event : MonoBehaviour
         characterOne.SetActive(false);  
 
         // Conversation text
-        charName.GetComponent<TMPro.TMP_Text>().text = "Character Two";
-        textToSpeak = "Nice to meet you too! I am <Insert Name>! What are you studying?";
+        // §3.5 Character Customization use case: invoked at initial system
+        // boot of the journey — the player defines their identity, which is
+        // converted into an immutable string field inside the data layer
+        // (SaveData → gamesave.json) through PlayerData.SetPlayerName.
+        if (nameInputPanel != null && nameInputField != null)
+        {
+            nameConfirmed = false;
+            nameInputPanel.SetActive(true);
+            yield return new WaitUntil(() => nameConfirmed);
+            nameInputPanel.SetActive(false);
+        }
+        if (string.IsNullOrWhiteSpace(playerCharacterName))
+        {
+            playerCharacterName = PlayerData.GetPlayerName() ?? "Player";
+        }
+        PlayerData.SetPlayerName(playerCharacterName);
+
+        charName.GetComponent<TMPro.TMP_Text>().text = playerCharacterName;
+        textToSpeak = $"Nice to meet you too! I am {playerCharacterName}! What are you studying?";
         textBox.GetComponent<TMPro.TMP_Text>().text = textToSpeak;  
         currentTextLenght = textToSpeak.Length;
         TextCreator.runTextPrint = true;  
@@ -168,7 +210,7 @@ public class Scene01_Event : MonoBehaviour
         yield return new WaitForSeconds(1);
         yield return new WaitUntil(() => textLenght == currentTextLenght);
         yield return new WaitForSeconds(0.5f);
-        charName.GetComponent<TMPro.TMP_Text>().text = "Character Two";
+        charName.GetComponent<TMPro.TMP_Text>().text = string.IsNullOrEmpty(playerCharacterName) ? "Character Two" : playerCharacterName;
         textToSpeak = "Me too! Do you want to meet in the park to hang out? I don't know anyone here yet and it would be nice to have a friend to explore the university with.";
         textBox.GetComponent<TMPro.TMP_Text>().text = textToSpeak;  
         currentTextLenght = textToSpeak.Length;
